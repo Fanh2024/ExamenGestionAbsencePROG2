@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: Absence Management API
+  version: 1.0.0
+  description: API for managing absences for students and supervisors
+servers:
+  - url: http://localhost:8080/api
+    description: Local server
+
+paths:
+  /absences:
+    get:
+      summary: Get all absences
+      operationId: getAllAbsences
+      responses:
+        '200':
+          description: List of all absences
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Absence'
+        '500':
+          description: Server error
+    post:
+      summary: Create a new absence
+      operationId: createAbsence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Absence'
+      responses:
+        '201':
+          description: Absence created successfully
+        '400':
+          description: Invalid request
+        '500':
+          description: Server error
+
+  /absences/{id}:
+    get:
+      summary: Get absence by ID
+      operationId: getAbsenceById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the absence
+      responses:
+        '200':
+          description: Absence details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Absence'
+        '404':
+          description: Absence not found
+        '500':
+          description: Server error
+    put:
+      summary: Update an existing absence
+      operationId: updateAbsence
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the absence to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Absence'
+      responses:
+        '200':
+          description: Absence updated successfully
+        '400':
+          description: Invalid request
+        '404':
+          description: Absence not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete an absence
+      operationId: deleteAbsence
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the absence to delete
+      responses:
+        '200':
+          description: Absence deleted successfully
+        '404':
+          description: Absence not found
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    Absence:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        absenceDate:
+          type: string
+          format: date
+          example: "2023-09-01"
+        justified:
+          type: boolean
+          example: true
+        reason:
+          type: string
+          example: "Medical appointment"
+        validatedBySupervisor:
+          type: boolean
+          example: false
+        student:
+          $ref: '#/components/schemas/Student'
+        supervisor:
+          $ref: '#/components/schemas/Supervisor'
+
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          example: "john.doe@example.com"
+        birthDate:
+          type: string
+          format: date
+          example: "2000-05-12"
+        group:
+          type: string
+          example: "Group A"
+        className:
+          type: string
+          example: "CS101"
+        unjustifiedAbsencesCount:
+          type: integer
+          example: 3
+        corStatus:
+          type: string
+          example: "Observation"
+        corStartDate:
+          type: string
+          format: date
+          example: "2023-08-01"
+
+    Supervisor:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        firstName:
+          type: string
+          example: "Jane"
+        lastName:
+          type: string
+          example: "Smith"
+        email:
+          type: string
+          example: "jane.smith@example.com"
+        department:
+          type: string
+          example: "Mathematics"
